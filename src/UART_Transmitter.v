@@ -12,9 +12,9 @@ module UART_Transmitter (
     reg [ 7:0] shift_reg   ;
     reg        transmitting;
 
-    localparam CLK_FREQ   = 10000000            ; // 10 MHz
-    localparam BAUD_RATE  = 115200              ; // 115200 baud
-    localparam BIT_PERIOD = CLK_FREQ / BAUD_RATE;
+    localparam CLK_FREQ   = 10000000; // 10 MHz
+    localparam BAUD_RATE  = 115200  ; // 115200 baud
+    localparam BIT_PERIOD = 87      ; // CLK_FREQ / BAUD_RATE
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

@@ -10,7 +10,7 @@ from cocotb.triggers import ClockCycles
 async def test_project(dut):
     dut._log.info("Start")
 
-    # Set the clock period to 10 us (100 KHz)
+    # Set the clock period to 100 ns (10 MHz)
     clock = Clock(dut.clk, 100, units="ns")
     cocotb.start_soon(clock.start())
 
@@ -23,11 +23,22 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
 
-    dut._log.info("Test project behavior")
+    dut._log.info("MOSI Test")
 
     for i in range(200):
         await ClockCycles(dut.clk, 1)
         dut._log.info("MOSI: " + str(dut.uo_out[0].value) + "SPI CLK: " + str(dut.uo_out[1].value) + "\n")
+
+    dut._log.info("UART Test")
+
+    dut._log.info("Reset")
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 10)
+    dut.rst_n.value = 1
+
+    for i in range(200):
+        await ClockCycles(dut.clk, 87)
+        dut._log.info("UART: " + str(dut.uo_out[4].value) + "\n")
         
 
     # Wait for one clock cycle to see the output values

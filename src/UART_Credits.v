@@ -12,11 +12,11 @@ module UART_Credits (
     reg [31:0] idle_counter       = 0          ;
     reg [ 7:0] MESSAGE     [0:10]              ;
 
-    parameter CLK_FREQ     = 10000000            ; // 10 MHz
-    parameter BAUD_RATE    = 115200              ; // 115200 baud
-    parameter SYMBOL_COUNT = CLK_FREQ / BAUD_RATE;
-    parameter BIT_COUNT    = 10                  ; // 1 start bit, 8 data bits, 1 stop bit
-    parameter IDLE_COUNT   = 100000              ; // 10 ms delay
+    parameter CLK_FREQ   = 10000000; // 10 MHz
+    parameter BAUD_RATE  = 115200  ; // 115200 baud
+    parameter BIT_PERIOD = 87      ; // CLK_FREQ / BAUD_RATE
+    parameter BIT_COUNT  = 10      ; // 1 start bit, 8 data bits, 1 stop bit
+    parameter IDLE_COUNT = 8700    ; // 10 ms delay
 
     localparam [7:0] CHAR_P     = 8'd80 ;
     localparam [7:0] CHAR_h     = 8'd104;
@@ -55,7 +55,7 @@ module UART_Credits (
                     MESSAGE[8]  <= CHAR_o;
                     MESSAGE[9]  <= CHAR_h2;
                     MESSAGE[10] <= CHAR_r;
-                    state       <= IDLE;
+                    state       <= START;
                 end
                 IDLE : begin
                     if (idle_counter < IDLE_COUNT) begin
@@ -71,7 +71,7 @@ module UART_Credits (
                     state        <= TRANSMIT;
                 end
                 TRANSMIT : begin
-                    if (clk_counter < SYMBOL_COUNT) begin
+                    if (clk_counter < BIT_PERIOD) begin
                         clk_counter <= clk_counter + 1;
                     end else begin
                         clk_counter <= 0;
