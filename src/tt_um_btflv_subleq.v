@@ -13,13 +13,14 @@ module tt_um_btflv_subleq (
 
 	assign in_miso = ui_in[0];
 
-	assign uio_out = data;
-	assign uio_oe  = 8'b11111111;
-	assign uo[0]   = out_mosi;
-	assign uo[1]   = out_sck;
-	assign uo[2]   = out_cs;
-	assign uo[3]   = tx;
-	assign uo[4]   = ctx;
+	assign uio_out     = data;
+	assign uio_oe      = 8'b11111111;
+	assign uo_out[0]   = out_mosi;
+	assign uo_out[1]   = out_sck;
+	assign uo_out[2]   = out_cs;
+	assign uo_out[3]   = tx;
+	assign uo_out[4]   = ctx;
+	assign uo_out[7:5] = 3'b111;
 
 	assign pc_out       = pc;
 	assign state_out    = state;
@@ -58,12 +59,12 @@ module tt_um_btflv_subleq (
 	wire               ramdone_out  ;
 	wire               tx_busy      ;
 	wire               ctx          ;
-	wire tx;
+	wire               tx           ;
 	wire signed [15:0] result       ;
-	wire in_miso;
-	wire out_mosi;
-	wire out_sck;
-	wire out_cs;
+	wire               in_miso      ;
+	wire               out_mosi     ;
+	wire               out_sck      ;
+	wire               out_cs       ;
 
 	SPI_FRAM_Interface ram (
 		.clk     (clk          ),
