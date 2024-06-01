@@ -1,41 +1,37 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 
-# Tiny Tapeout Verilog Project Template
+# Subleq CPU with SPI FRAM and UART Output
 
 - [Read the documentation for project](docs/info.md)
 
-## What is Tiny Tapeout?
+## What is Subleq
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+Copied from [Esolang Wiki - Subleq](https://esolangs.org/wiki/Subleq) :
 
-To learn more and get started, visit https://tinytapeout.com.
+Subleq refers to a kind of OISC where the one instruction is "SUBtract and branch if Less-than or EQual to zero", conventionally abbreviated to subleq.
 
-## Set up your Verilog project
+Subleq is a simple one instruction language. Each Subleq instruction has 3 memory address operands. Since Subleq has only one instruction, the opcode itself is conventionally omitted, so each instruction is three addresses long.
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+(Go to the eslolangs link for more infos and examples)
 
-The GitHub action will automatically build the ASIC files using [OpenLane](https://www.zerotoasiccourse.com/terminology/openlane/).
+## SPI FRAM
 
-## Enable GitHub actions to build the results page
+As RAM an 8KB FRAM is used with a 20MHZ SPI interface (MB85RS64V). The advantage of SPI RAM in comparison to SPI Flash is the access time. Every byte can be accessed directly without having bank switching, which leads to different access when randomly accessing data. But in comparison to usual RAM, FRAM is non-volatile. So it has the advantages of Flash and RAM memory (but costs much more).
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+## UART
 
-## Resources
+To output data, a simple printf implementation can be used in the C code. In Subleq it's implemented like this:
+"If B is -1 (negative unity), then the number contained in the address given by A is interpreted as a character and written to the machine's output. C is unused."
+[Rosetta Code - Subleq](https://rosettacode.org/wiki/Subleq)
 
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://docs.google.com/document/d/1aUUZ1jthRpg4QURIIyzlOaPWlmQzr-jBn3wZipVUPt4)
+The Baud is 115200, when a 10MHz clock is used.
 
-## What next?
+## Subleq C Compiler
 
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
+There is a C Compiler for Subleq. It only supports a typeless simplified subset of C, but most simple things can be done with it.
+It is written in C++ and doesn't depend on libraries or external tools. The original website for it is offline, but infos about the compiler still exist on [Esolang Wiki - Higher Subleq](https://esolangs.org/wiki/Higher_Subleq) with a Download Link at the web archive on the bottom of the page. But i will also include the compiler code in the repo.
+
+## How to use it
+
+Use an Arduino compatible Microcontroller with at least 16KB Memory. Convert the output from the compiler with the given converter to an array, import it to the given Arduino Sketch, flash it and run it. The cpu is designed for 10MHz, but it needs to be tested how fast or slow it can go. The SPI clock is half the input clock. Keep in mind that when changing the clock speed the uart baud will also change.
+I will make a kinda userfriendly toolchain and publish it on my github. It will include a Subleq to hex converter (for Quartus etc.), a Subleq to C string converter, an Arduino sketch for flashing to FRAM and example C/Subleq codes.
