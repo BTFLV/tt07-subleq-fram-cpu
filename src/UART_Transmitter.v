@@ -3,7 +3,6 @@ module UART_Transmitter (
     input  wire           rst_n   ,
     input  wire           tx_start,
     input  wire     [7:0] tx_data ,
-    output      reg       tx_done ,
     output      reg       tx      ,
     output      reg       tx_busy
 );
@@ -20,7 +19,6 @@ module UART_Transmitter (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             tx           <= 1'b1;
-            tx_done      <= 1'b0;
             tx_busy      <= 1'b0;
             transmitting <= 1'b0;
             baud_counter <= 0;
@@ -47,14 +45,11 @@ module UART_Transmitter (
                         tx          <= 1'b1;
                         bit_counter <= bit_counter + 1;
                     end else begin
-                        tx_done      <= 1'b1;
                         tx_busy      <= 1'b0;
                         transmitting <= 1'b0;
                         bit_counter  <= 0;
                     end
                 end
-            end else begin
-                tx_done <= 1'b0;
             end
         end
     end

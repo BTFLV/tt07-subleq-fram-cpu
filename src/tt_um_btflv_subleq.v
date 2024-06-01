@@ -78,7 +78,6 @@ module tt_um_btflv_subleq (
 		.rst_n   (rst_n   ),
 		.tx_start(tx_start),
 		.tx_data (char_out),
-		.tx_done (tx_done ),
 		.tx      (tx      ),
 		.tx_busy (tx_busy )
 	);
