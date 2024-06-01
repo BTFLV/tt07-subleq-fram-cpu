@@ -18,22 +18,22 @@ module SPI_FRAM_Interface (
     assign address      = (addr[14:0] << 1)  + !hbyte;
     assign write_enable = we;
 
-    reg [ 7:0] temp_data  ;
-    reg [ 4:0] state      ;
-    reg [ 4:0] bit_counter;
-    reg [ 5:0] spi_clk    ;
-    reg        clk_out    ;
-    reg        hbyte      ;
+    reg [7:0] temp_data  ;
+    reg [4:0] state      ;
+    reg [4:0] bit_counter;
+    reg [5:0] spi_clk    ;
+    reg       clk_out    ;
+    reg       hbyte      ;
 
     wire [ 7:0] write_data_l;
     wire [ 7:0] write_data_h;
     wire        write_enable;
     wire [15:0] address     ;
 
-    parameter CMD_READ   = 8'h03;
-    parameter CMD_WRITE  = 8'h02;
-    parameter CMD_WREN   = 8'h06;
-    parameter CMD_WRDI   = 8'h04;
+    parameter CMD_READ  = 8'h03;
+    parameter CMD_WRITE = 8'h02;
+    parameter CMD_WREN  = 8'h06;
+    parameter CMD_WRDI  = 8'h04;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -62,7 +62,8 @@ module SPI_FRAM_Interface (
                 0 : begin
                     done <= 0;
                     if (start && write_enable) begin
-                        state <= 6;
+                        state    <= 6;
+                        spi_mosi <= CMD_WREN[7];
                     end else if (start || hbyte) begin
                         state    <= 1;
                         spi_cs   <= 0;
@@ -77,7 +78,7 @@ module SPI_FRAM_Interface (
                         if (!spi_sck) bit_counter <= bit_counter + 1;
                     end else begin
                         bit_counter <= 0;
-                        spi_mosi    <= 0;
+                        spi_mosi    <= address[15];
                         spi_sck     <= 0;
                         state       <= 2;
                     end
@@ -157,6 +158,7 @@ module SPI_FRAM_Interface (
                     end else begin
                         bit_counter <= 0;
                         state       <= 9;
+                        spi_mosi    <= CMD_WRITE[7];
                     end
                 end
                 9 : begin // Send write command
@@ -167,7 +169,7 @@ module SPI_FRAM_Interface (
                         if (!spi_sck) bit_counter <= bit_counter + 1;
                     end else begin
                         bit_counter <= 0;
-                        spi_mosi    <= 0;
+                        spi_mosi    <= address[15];
                         spi_sck     <= 0;
                         state       <= 10;
                     end
@@ -179,10 +181,13 @@ module SPI_FRAM_Interface (
                         if (!spi_sck) bit_counter <= bit_counter + 1;
                     end else begin
                         bit_counter <= 0;
-                        spi_mosi    <= 0;
                         spi_sck     <= 0;
                         state       <= 11;
-                        spi_mosi    <= write_data_h[7 - bit_counter];
+                        if(hbyte) begin
+                            spi_mosi <= write_data_h[7];
+                        end else begin
+                            spi_mosi <= write_data_l[7];
+                        end
                     end
                 end
                 11 : begin // Write data byte
@@ -212,6 +217,7 @@ module SPI_FRAM_Interface (
                     end else begin
                         bit_counter <= 0;
                         state       <= 14;
+                        spi_mosi    <= CMD_WRDI[7];
                     end
                 end
                 14 : begin // Send Write Disable (WRDI) command

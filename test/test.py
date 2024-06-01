@@ -27,7 +27,7 @@ async def test_project(dut):
 
     for i in range(200):
         await ClockCycles(dut.clk, 1)
-        dut._log.info("MOSI: " + str(dut.uo_out[0].value) + "SPI CLK: " + str(dut.uo_out[1].value) + "\n")
+        dut._log.info("MOSI: " + str(dut.uo_out[0].value) + "SPI CLK: " + str(dut.uo_out[1].value))
 
     dut._log.info("UART Test")
 
@@ -38,7 +38,7 @@ async def test_project(dut):
 
     for i in range(200):
         await ClockCycles(dut.clk, 87)
-        dut._log.info("UART: " + str(dut.uo_out[4].value) + "\n")
+        dut._log.info("UART: " + str(dut.uo_out[4].value))
         
 
     # Wait for one clock cycle to see the output values

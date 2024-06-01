@@ -16,7 +16,7 @@ module UART_Credits (
     parameter BAUD_RATE  = 115200  ; // 115200 baud
     parameter BIT_PERIOD = 87      ; // CLK_FREQ / BAUD_RATE
     parameter BIT_COUNT  = 10      ; // 1 start bit, 8 data bits, 1 stop bit
-    parameter IDLE_COUNT = 8700    ; // 10 ms delay
+    parameter IDLE_COUNT = 8700    ; // Delay
 
     localparam [7:0] CHAR_P     = 8'd80 ;
     localparam [7:0] CHAR_h     = 8'd104;
