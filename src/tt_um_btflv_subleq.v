@@ -58,7 +58,12 @@ module tt_um_btflv_subleq (
 	wire               ramdone_out  ;
 	wire               tx_busy      ;
 	wire               ctx          ;
+	wire tx;
 	wire signed [15:0] result       ;
+	wire in_miso;
+	wire out_mosi;
+	wire out_sck;
+	wire out_cs;
 
 	SPI_FRAM_Interface ram (
 		.clk     (clk          ),
