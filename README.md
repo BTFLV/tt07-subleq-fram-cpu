@@ -20,7 +20,7 @@ As RAM an 8KB FRAM is used with a 20MHZ SPI interface (MB85RS64V). The advantage
 
 ## UART
 
-To output data, a simple printf implementation can be used in the C code. In Subleq it's implemented like this:
+You can easily output data in the C Code. Look in the examples how it's done. In Subleq it's implemented like this:
 "If B is -1 (negative unity), then the number contained in the address given by A is interpreted as a character and written to the machine's output. C is unused."
 [Rosetta Code - Subleq](https://rosettacode.org/wiki/Subleq)
 

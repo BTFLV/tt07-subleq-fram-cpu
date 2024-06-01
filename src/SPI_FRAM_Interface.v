@@ -19,7 +19,6 @@ module SPI_FRAM_Interface (
     assign write_enable = we;
 
     reg [ 7:0] temp_data  ;
-    reg [31:0] counter    ;
     reg [ 4:0] state      ;
     reg [ 4:0] bit_counter;
     reg [ 5:0] spi_clk    ;
@@ -35,7 +34,6 @@ module SPI_FRAM_Interface (
     parameter CMD_WRITE  = 8'h02;
     parameter CMD_WREN   = 8'h06;
     parameter CMD_WRDI   = 8'h04;
-    parameter ONE_SECOND = 20   ;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -56,7 +54,6 @@ module SPI_FRAM_Interface (
             spi_cs      <= 1;
             spi_sck     <= 0;
             spi_mosi    <= 0;
-            counter     <= 0;
             state       <= 0;
             bit_counter <= 0;
             hbyte       <= 0;
@@ -67,7 +64,6 @@ module SPI_FRAM_Interface (
                     if (start && write_enable) begin
                         state <= 6;
                     end else if (start || hbyte) begin
-                        counter  <= 0;
                         state    <= 1;
                         spi_cs   <= 0;
                         spi_mosi <= 0;

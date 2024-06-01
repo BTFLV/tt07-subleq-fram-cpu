@@ -10,7 +10,6 @@ module UART_Credits (
     reg [ 3:0] char_counter       = 0          ;
     reg [ 7:0] tx_shift_reg       = 8'b11111111;
     reg [31:0] idle_counter       = 0          ;
-    reg        tx_busy            = 0          ;
     reg [ 7:0] MESSAGE     [0:10]              ;
 
     parameter CLK_FREQ     = 10000000            ; // 10 MHz
@@ -40,7 +39,6 @@ module UART_Credits (
             char_counter <= 0;
             tx_shift_reg <= 8'b11111111;
             idle_counter <= 0;
-            tx_busy      <= 0;
             tx           <= 1'b1;
             state        <= INIT;
         end else begin
@@ -68,7 +66,6 @@ module UART_Credits (
                     end
                 end
                 START : begin
-                    tx_busy      <= 1;
                     char_counter <= 0;
                     tx_shift_reg <= MESSAGE[0];
                     state        <= TRANSMIT;
@@ -99,7 +96,6 @@ module UART_Credits (
                                 tx_shift_reg <= MESSAGE[char_counter + 1];
                             end else begin
                                 char_counter <= 0;
-                                tx_busy      <= 0;
                                 state        <= IDLE;
                             end
                         end

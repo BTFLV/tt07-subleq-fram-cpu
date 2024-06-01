@@ -22,12 +22,6 @@ module tt_um_btflv_subleq (
 	assign uo_out[4]   = ctx;
 	assign uo_out[7:5] = 3'b111;
 
-	assign pc_out       = pc;
-	assign state_out    = state;
-	assign ram_addr_out = ram_addr;
-	assign ramstart_out = ramstart;
-	assign ramdone_out  = ramdone;
-	assign halted       = halted_reg;
 	assign char_out     = data_a[7:0];
 	assign char_valid   = char_output_flag;
 	assign result       = data_b - data_a;
@@ -42,21 +36,13 @@ module tt_um_btflv_subleq (
 	reg signed [15:0] data_to_ram     ;
 	reg               ram_we          ;
 	reg        [15:0] ram_addr        ;
-	reg               read_toggle     ;
 	reg               tx_start        ;
 	reg               ramstart        ;
 
 	wire               ramdone      ;
-	wire               tx_done      ;
 	wire        [ 7:0] char_out     ;
 	wire               char_valid   ;
-	wire               halted       ;
 	wire        [15:0] data_from_ram;
-	wire        [15:0] pc_out       ;
-	wire        [ 5:0] state_out    ;
-	wire        [15:0] ram_addr_out ;
-	wire               ramstart_out ;
-	wire               ramdone_out  ;
 	wire               tx_busy      ;
 	wire               ctx          ;
 	wire               tx           ;
@@ -140,7 +126,6 @@ module tt_um_btflv_subleq (
 			data_to_ram      <= 16'b0;
 			ram_addr         <= 15'b0;
 			ram_we           <= 1'b0;
-			read_toggle      <= 1'b0;
 		end else begin
 			case (state)
 
@@ -187,19 +172,6 @@ module tt_um_btflv_subleq (
 
 				FETCH_C2 : begin
 					ir_c <= data_from_ram;
-				end
-
-				FETCH_A0 : begin
-					ram_addr <= ir_a;
-					ramstart <= 1'b1;
-				end
-
-				FETCH_A1 : begin
-					ramstart <= 1'b0;
-				end
-
-				FETCH_A2 : begin
-					ir_a <= data_from_ram;
 				end
 
 				// Decode A B
